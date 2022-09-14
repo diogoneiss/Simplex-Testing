@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  "Simplex"
+]
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"

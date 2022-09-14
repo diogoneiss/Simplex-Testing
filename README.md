@@ -1,6 +1,11 @@
 # Simplex 2 fases dual
 
-Desenvolvido por Diogo Neiss para a disciplina de Pesquisa Operacional
+Desenvolvido por Diogo Neiss e Carlos Magalhães para a disciplina de Pesquisa Operacional
+
+*Como usar?*
+
+Digite `pytest -v` na linha de comando, após baixar os requirements, que ele encontrará todos os testes automáticos
+
 
 Existem dois testes: unitários e end-to-end. O end-to-end compara se você tem a saída correta, comparando com o scipy, ao ler um arquivo.
 
@@ -77,3 +82,9 @@ Abaixo temos as etapas do simplex, todas possuem um teste associado.
 ## Emissão de certificados
 
 Se você usar o VERO, é trivial encontrar os certificados. Você precisará descobrir se é ilimitado, inviável ou ótimo.
+
+## Entrada
+
+A primeira linha da entrada contem dois inteiros n e m, o número de restrições e variáveis.
+A segunda linha contem m inteiros, ci , que foram vetor de custo.
+Cada uma das n linhas seguintes contém m + 1 inteiros que representam as restrições. Para a i-ésima linha, os m primeiros números são Ai,1, Ai,2,...,Ai,m enquanto o último é Bi
