@@ -25,15 +25,14 @@ def create_namedtuple_from_dict(obj):
     else:
         return obj
     
-def inject_test_data(file):
+def inject_test_data(file, currentDir=os.path.dirname(__file__)):
     """
         Read the content of the JSON file and convert it to a named tuple,
         can be used for injecting test data set to tests, helps in separating test data from the tests
     """
-    workingDirectory = os.path.dirname(__file__)
-    caseFolder = "cases"
-    filePath = os.path.join(workingDirectory, caseFolder, file)
     
+    filePath = os.path.join(currentDir, file)
+
     with open(filePath) as f:
         raw_data = json.load(f)
     return create_namedtuple_from_dict(raw_data)

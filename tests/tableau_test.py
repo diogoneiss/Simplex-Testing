@@ -1,42 +1,21 @@
 import numpy as np
 import numpy.testing as npt
 import pytest
-from readJsonData import inject_test_data
+from pytest import input_test_data 
+
 import sys
 import io
 from Simplex.main import TableauParsing
-
+from pathlib import Path
 class TestTableau:
     
-    test_data = inject_test_data(file="input.json")
+   
     
-    @pytest.mark.parametrize("input", test_data.rawInputs)
-    def test_full_tableau(self, input):
-        m, n = input.M, input.N
-        c, ab = input.C, input.AB
-        
 
-        createdTableau = TableauParsing.createTableau(c, ab, n, m)
-        
-        expected = input.FullTableau
-        
-        npt.assert_allclose(createdTableau, expected)
-        
-    @pytest.mark.parametrize("input", test_data.rawInputs)    
-    def test_tableau_regular_variables(self, input):
-        arrayAB = np.array(input.AB)
-        arrayC = np.array([input.C])
-        
-        n, m = input.N, input.M
-        
-        createdTableau = TableauParsing.create_regular_tableau(arrayC, arrayAB, n, m)
-        expectedTableau = np.array(input.Tableau)
-        npt.assert_allclose(createdTableau, expectedTableau )
     
-    
-    
-    def test_tableau_slack_variables(self):
-        # talvez seja legal parametrizar isso usando o proprio tableau, so que sem a primeira linha
+   
+    def test_tableau_slack_variables_with_3_variables(self):
+        # adicionar mais casos
         arrayAB = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]])
         n = 4
         m = 3
@@ -62,7 +41,7 @@ class TestTableau:
         
         npt.assert_allclose(first_line, expected_line)
         
-    @pytest.mark.parametrize("input", test_data.rawInputs)
+    @pytest.mark.parametrize("input", input_test_data)
     def test_operations_register(self, input):
         # testar se o registro de operações é corretamente montado
         """ cria uma matriz com a primeira linha sendo de 0's e o restante sendo uma identidade
@@ -73,7 +52,7 @@ class TestTableau:
         | 0 .... 0 1 0 |
         | 0 .... 0 0 1 |
         """
-        n = input.N
+        n = input.N_restricoes
     
         
         combined= TableauParsing.create_operations_register(n)

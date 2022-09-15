@@ -1,35 +1,38 @@
 # Necessário que a entrada gere os vetores corretamente
 
 
+from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 import pytest
-from readJsonData import inject_test_data
+from pytest import input_test_data 
 import sys
 import io
 from Simplex.main import *
 
 
 class TestInput:
-    test_data = inject_test_data(file="input.json")
     
+
     
-    @pytest.mark.parametrize("entrada", test_data.rawInputs)
+    # fazer isso tudo mockando o input com o Typer
+    @pytest.mark.parametrize("entrada", input_test_data)
     def test_input_read_m_n(self, entrada):
         sys.stdin = io.StringIO(entrada.input)
         m, n = TableauParsing.readDimensions()
         
-        assert m == entrada.M
-        assert n == entrada.N
+        assert m == entrada.M_variaveis
+        assert n == entrada.N_restricoes
     
-    @pytest.mark.parametrize("entrada", test_data.rawInputs)
+    @pytest.mark.parametrize("entrada", input_test_data)
     def test_input_read(self, entrada):
-        #mock input
+        
         sys.stdin = io.StringIO(entrada.input)
 
-        n, m = TableauParsing.readDimensions()
-        print("Capturado:", n)
-        print("Esperado:", entrada.N)
+        m, n = TableauParsing.readDimensions()
+        print("Capturado: ", n, m)
+        
+        print("Esperado:", entrada.N_restricoes)
         
         arrayC, arrayAB = TableauParsing.readInput(n)
         
@@ -45,6 +48,10 @@ class TestInput:
         matprint(arrayAB)
         print("Expected: ")
         matprint(expectedAB)
+        print()
+        matprint(arrayC)
+        print("Expected: ")
+        matprint(expectedC)
         
         assert arrayC.shape == expectedC.shape
         assert arrayAB.shape == expectedAB.shape

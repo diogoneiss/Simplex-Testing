@@ -1,11 +1,4 @@
 # Lógica
 
-Linhas que começam com * são partes de uma etapa dos testes e o que vem depois da | é o valor esperado.
-
-Então se eu tenho
-
-* 1 2 3 | 1 2 3
-* 1 2 3 | 6
-
-Eu espero que o primeiro teste tenha entrada 1 2 3 e produza 1 2 3
-e que o segundo tenha entrada 1 2 3 e saída 6.
+1. O arquivo `input.json` contém as entrada e saídas esperadas  dos testes de integração / end-to-end. Esses testes foram testados extensivamente manualmente e com outros solvers. Se você acha que há algum erro, provavelmente você implementou diferente, preste atenção nos formatos.
+2. O arquivo `unitTestData.json` contém as entradas e saídas esperadas dos testes de integração / end-to-end

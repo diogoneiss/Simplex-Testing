@@ -7,12 +7,29 @@ class TableauParsing:
     
     @staticmethod
     def readDimensions():
+        """ Le a primeira linha da entrada, que contém o número de restrições(M) e de variaveis (N)
+
+        Returns:
+            m_variaveis, n_restricoes: Tupla de inteiros com o número de restrições e o número de variáveis
+        """
+        
+        
         # Read input from stdin
-        n, m = map(int, input().split())
-        return n, m
+        duplaMN = tuple(map(int, input().split()))
+
+        return duplaMN
 
     @staticmethod
-    def readInput(n: int):
+    def readInput(n: int) -> tuple:
+        """Le o vetor C e a matriz AB
+
+        Args:
+            n (int): numero de restricoes
+
+        Returns:
+            arrayC, arrayAB: Tupla de arrays numpy com o vetor C e a matriz AB, ambos com duas dimenções
+        """
+       
        
         # pegando o vetor c normal da linha
         arrayC = np.array([input().strip().split()], float) 
