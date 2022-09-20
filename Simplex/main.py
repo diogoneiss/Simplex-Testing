@@ -1,8 +1,137 @@
 import numpy as np
 
 
+
 DEBUG_TABLEAU = False
 
+
+class SimplexRunner:
+   def __init__(self, tableau, m_variables, n_restrictions):
+        self.tableau = tableau
+        self.m_variables = m_variables
+        self.n_restrictions = n_restrictions
+    
+class Simplex:
+
+    
+        
+    @staticmethod
+    def pivotTableau(original_tableau: np.ndarray, column: int, row: int):
+        
+        if(type(original_tableau) is list):
+            tableau = np.array(original_tableau, dtype=float)
+        else:
+            tableau = np.copy(original_tableau)
+        
+        num_rows, _ = tableau.shape
+        pivotableRows = list(range(num_rows))
+        
+        pivotValue = tableau[row][column]
+        print(pivotValue)
+        
+        # modificar row para pivo ser 1 e remover da lista
+        tableau[row] =  tableau[row] * (1.0 / pivotValue ) 
+
+        print(tableau)
+        idxPivot = pivotableRows.index(row)
+        pivotableRows.pop(idxPivot)
+        
+        # manipular rows pelo valor necessario para tornalos zero
+        for current_row in pivotableRows:
+            """
+            Se eu tenho
+            [[3 2 3],
+            [1 4 5]]
+            e quero transformar o 3 em 0 , preciso aplicar qual operacao na coluna?
+            
+            Subtrair 3 * linhaPivo (o pivo já vai ser 1), ou seja:
+            
+            [3, 2, 3] = [3, 2, 3] - [1, 4, 5] * 3
+            == [0, - 10, -12]
+            
+            """
+            rowSubtractor = tableau[row] * tableau[current_row][column] 
+            tableau[current_row] -= rowSubtractor
+            
+        return tableau
+            
+    @staticmethod
+    def pivotTableau(tableau: np.ndarray, column: int, row: int):
+        
+        num_rows, _ = tableau.shape
+        pivotableRows = list(range(num_rows))
+        
+        # modificar row para pivo ser 1 e remover da lista
+        tableau[row] *= 1 / tableau[row][column]
+        pivotableRows.pop(pivotableRows.index(row))
+        print(pivotableRows)
+        # manipular rows pelo valor necessario para tornalos zero
+        for current_row in pivotableRows:
+            """
+            Se eu tenho
+            [[3 2 3],
+            [1 4 5]]
+            e quero transformar o 3 em 0 , preciso aplicar qual operacao na coluna?
+            
+            Subtrair 3 * linhaPivo (o pivo já vai ser 1), ou seja:
+            
+            [3, 2, 3] = [3, 2, 3] - [1, 4, 5] * 3
+            == [0, - 10, -12]
+            
+            """
+            rowSubtractor = tableau[row] * tableau[current_row][column] 
+            tableau[current_row] -= rowSubtractor
+        return tableau
+
+class AuxiliarLP:
+    def __init__(self, tableau, m_variables, n_restrictions):
+        self.tableau = tableau
+        self.m_variables = m_variables
+        self.n_restrictions = n_restrictions
+        self.old_c = tableau[0]
+    
+    def createSintheticC(self):
+        # tableau tem m (vero) + n (variaveis) + m (folgas) + 1 de largura
+        # vamos inserir uma coluna identidade e zerar o c
+        
+        zeroC = np.zeros(self.m_variables+2*self.n_restrictions)
+        
+        auxiliarC = np.ones(self.n_restrictions)
+        
+        # finalizar formato (0, 0, 0... 1, 1 ... 1) 
+        
+        tmpC = np.hstack((zeroC, auxiliarC))
+        
+        fullC = np.hstack((tmpC, [0]))
+        
+        return fullC
+    
+    def addSyntheticRestrictions(self, newC):
+        
+        # remove first row from tableau
+        abMatrix = np.delete(self.tableau, 0, 0)
+        
+        # create n_restrictions * n_restrictions identity
+        identityRestrictions = np.identity(self.n_restrictions)
+        
+        # insert just before b
+        position = self.m_variables + 2*self.n_restrictions
+        
+        
+        tableauAb = np.insert(abMatrix, position , identityRestrictions, axis=1)
+        
+        fullTableau = np.vstack((newC, tableauAb))
+        
+        return fullTableau
+    
+    
+        
+        
+        
+        
+    
+    
+        
 class TableauParsing:
     
     @staticmethod
