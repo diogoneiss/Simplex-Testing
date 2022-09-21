@@ -13,11 +13,82 @@ class SimplexRunner:
     
 class Simplex:
 
-    
+
+    @staticmethod
+    def extract_feasible_columns(tableau: np.ndarray,  n_restrictions: int, removeB = True) -> np.ndarray:
+        """_summary_: Extracts the feasible columns from the tableau.
+
+        Args:
+            tableau (np.ndarray): tableau with vero, a, aditional variables and b
+            n_restrictions (int): number of restrictions
+            removeB (bool, optional): whether to remove the b column. Defaults to True.
+
+        Returns:
+            np.ndarray: sliced tableau with only the feasible columns
+        """
+        if removeB:
+            return tableau[:, n_restrictions: -1]
+        else:
+            return tableau[:, n_restrictions:]
+            
+
+    @staticmethod
+    @DeprecationWarning
+    def putInCanonicalForm(original_tableau: np.ndarray, basicColumns: list):
+        # for each basic column, subtract the column from the objective function c times such
+        # that the basic column is zero in the first row
+        
+        for rowIndex, basicColumn in enumerate(basicColumns):
+            # the first row is the objective function
+            c_i = original_tableau[0, basicColumn]
+            
+            
+            variable_row = np.where(original_tableau[1:, basicColumn] == 1)[0][0] + 1
+
+            # subtract the basis (an identity) times c_i, resulting in c_i = 0
+            original_tableau[0] -= c_i * original_tableau[variable_row]
+            
+        return original_tableau
+        
+    @staticmethod
+    def findPivot(original_tableau: np.ndarray, n_restrictions:int ):
+        # find column < 0
+        column = -1
+        
+        
+        feasible_c_columns = Simplex.extract_feasible_columns(original_tableau, n_restrictions)
+        
+        # use bland rule (leftmost c value)
+        for c in feasible_c_columns[0]:
+            if c < 0:
+                column = c + n_restrictions
+                break
+            
+        row = -1
+        smallestRatio = np.inf
+        
+        # find smallest ratio (b_i/a_i), such that a_i > 0
+        for i, a_i in enumerate(original_tableau[:,column]):
+           b_i = original_tableau[i][-1]
+           if a_i >= 0:
+            ratio = b_i / a_i
+            
+            if ratio < smallestRatio:
+                smallestRatio = ratio
+                row = i
+               
+        if row == column == -1:
+            raise Exception("Colocar texto da excessao de ilimitada")
+        
+ 
+        
+        return row, column
+        
         
     @staticmethod
     def pivotTableau(original_tableau: np.ndarray, column: int, row: int):
         
+        # se passar lista inves de np.array() não quebra
         if(type(original_tableau) is list):
             tableau = np.array(original_tableau, dtype=float)
         else:
@@ -27,12 +98,11 @@ class Simplex:
         pivotableRows = list(range(num_rows))
         
         pivotValue = tableau[row][column]
-        print(pivotValue)
-        
+       
         # modificar row para pivo ser 1 e remover da lista
         tableau[row] =  tableau[row] * (1.0 / pivotValue ) 
 
-        print(tableau)
+       
         idxPivot = pivotableRows.index(row)
         pivotableRows.pop(idxPivot)
         
@@ -64,7 +134,7 @@ class Simplex:
         # modificar row para pivo ser 1 e remover da lista
         tableau[row] *= 1 / tableau[row][column]
         pivotableRows.pop(pivotableRows.index(row))
-        print(pivotableRows)
+       
         # manipular rows pelo valor necessario para tornalos zero
         for current_row in pivotableRows:
             """
@@ -98,7 +168,7 @@ class AuxiliarLP:
         
         auxiliarC = np.ones(self.n_restrictions)
         
-        # finalizar formato (0, 0, 0... 1, 1 ... 1) 
+        # finalizar formato (0, 0, 0... 1, 1 ... 0) 
         
         tmpC = np.hstack((zeroC, auxiliarC))
         
@@ -124,7 +194,52 @@ class AuxiliarLP:
         
         return fullTableau
     
+    def setupCanonicalForm(self):
+        newC = self.createSintheticC()
+        newTableau = self.addSyntheticRestrictions(newC)
+        start = self.m_variables + 2*self.n_restrictions
+        
+        
+        # pivotear cada coluna da base trivial para colocar o 0 zero
+        for i in range(0, self.n_restrictions):
+            newTableau = Simplex.pivotTableau(newTableau, start+i, i+1 )
+        
+        
+        return newTableau
     
+    
+    def isUnfeasible(self):
+        
+        
+        result = self.tableau[0][-1]
+        
+        # se o resultado for 0, é otimo. 
+        if result == 0:
+            
+            # criar aqui alguma lógica de fuçar o tableau e ver se tem alguma base sobrando? 
+            # é o problema do scipy
+            
+            return False
+        
+        # se o resultado for negativo, é inviavel
+        if result < 0:
+            return True
+        
+
+    
+    def restoreOriginalC(self):
+        originalC = self.old_c
+        
+        # get only first n values from row
+        veroData = self.tableau[0][0:self.m_variables]
+        
+        #perform operations to get the new c
+        for i, value in enumerate(veroData):
+            originalC[i] += (value * self.tableau[i+1])
+        
+        self.tableau[0] = originalC
+        
+        return self.tableau
         
         
         
