@@ -1,31 +1,33 @@
 import numpy as np
 
+from Simplex import *
 
-
-class AuxiliarLP:
+class AuxiliarLP():
     def __init__(self, tableau, m_variables, n_restrictions):
+        
         self.tableau = tableau
         self.m_variables = m_variables
-
+        self.n_restrictions = n_restrictions
+       
         # synthetic variables
         self.new_m_variables = m_variables + n_restrictions
 
-        self.n_restrictions = n_restrictions
+        
         self.old_c = tableau[0]
+        
 
-
-    def run_auxiliar(self):
-        from simplex import Simplex
+    def phase_1(self):
+        
         canonical_tableau = self.setup_canonical_form()
+        
+        # create simplex object with the new tableau and variables
+        simplexObj = Simplex(m=self.new_m_variables, n=self.n_restrictions, tableau=canonical_tableau)
+        
+        self.tableau = simplexObj.solve()
 
-        simplexRunner = Simplex(m=self.new_m_variables, n=self.n_restrictions, tableau=canonical_tableau)
-
-        # finish simplex
-        self.tableau = simplexRunner.run_phase_2()
-
-        # if 0 objective function not found it is unfeasible
-        #if self.is_unfeasible():
-        #    raise UnfeasibleError
+        # if 0 value for objective function not found it is unfeasible
+        if self.is_unfeasible():
+            raise UnfeasibleError
 
         # remove synthetic variables and restore c
 

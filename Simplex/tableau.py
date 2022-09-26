@@ -1,5 +1,6 @@
 
 import numpy as np
+DEBUG_TABLEAU = False
 
 class TableauParsing:
 

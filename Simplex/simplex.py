@@ -1,44 +1,19 @@
 import numpy as np
-from tableau import TableauParsing
-from auxiliar_lp import AuxiliarLP
+
+from Simplex import *
+
+
+
 class Simplex:
 
-    def __init__(self, m=-1, n=-1, tableauMatrix=-1) -> None:
+    def __init__(self, m, n, tableauMatrix) -> None:
 
-        # read m n
-        if m != -1 and n != -1:
-            self.m_variables, self.n_restrictions = m, n
-        else:
-            self.m_variables, self.n_restrictions = TableauParsing.readDimensions()
+        self.m_variables = m
+        self.n_restrictions = n
+        self.tableau = tableauMatrix
 
-        # input
-        if tableauMatrix != -1:
-            self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
-        else:
-            self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
 
-    def runSimplex(self):
-        #try:
-            # execute phase 1
-
-        plRunner = AuxiliarLP(self.tableau, self.m_variables, self.n_restrictions)
-        self.run_phase_1(plRunner)
-
-        # finish until done or unbounded
-        """
-        except UnboundedError:
-            pass
-        except UnfeasibleError:
-            pass
-        """
-    def run_phase_1(self, auxiliar_lp):
-
-        # create "new" simplex with the auxiliary variables and objective function
-        temp_simplex = Simplex(m=auxiliar_lp.m_variables, n=auxiliar_lp.n_restrictions, tableau=auxiliar_lp.tableau)
-        temp_simplex.run_phase_2()
-        pass
-
-    def run_phase_2(self):
+    def solve(self):
         stop = self.isSimplexDone(self.tableau)
         while not stop:
             # check if unbounded
@@ -92,8 +67,7 @@ class Simplex:
 
         return False
 
-    @staticmethod
-    def isSimplexDone(tableau):
+    def isSimplexDone(self):
         """ Verifica se o simplex terminou de executar, ou seja, se C > 0 e B > 0
 
         Args:
@@ -103,11 +77,11 @@ class Simplex:
             Bool: Se ele já acabou.
         """
 
-        for c in tableau[0]:
+        for c in self.tableau[0]:
             if c < 0:
                 return False
 
-        for b in tableau[:, -1]:
+        for b in self.tableau[:, -1]:
             if b < 0:
                 return False
 

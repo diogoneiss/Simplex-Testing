@@ -5,8 +5,7 @@ from pytest import input_test_data
 import sys
 import io
 
-from Simplex.main import *
-
+from Simplex import *
 
 class TestAuxiliar:
 

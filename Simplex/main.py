@@ -1,13 +1,6 @@
 import numpy as np
-from simplex import Simplex
+from Simplex import *
 
-DEBUG_TABLEAU = False
-class UnboundedError(Exception):
-    pass
-
-
-class UnfeasibleError(Exception):
-    pass
 
 class SimplexTester:
     """
@@ -24,6 +17,31 @@ class SimplexTester:
         self.Final_Certificate = None
         self.Lp_Type = None
 
+class SimplexRunner():
+    def __init__(self) -> None:
+
+        # read m n
+
+        self.m_variables, self.n_restrictions = TableauParsing.readDimensions()
+
+        self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
+        
+        self.simplex = Simplex(m=self.m_variables, n=self.n_restrictions, tableau=self.tableau)
+        
+    def runSimplex(self):
+        #try:
+            # execute phase 1
+
+        plRunner = AuxiliarLP(self.tableau, self.m_variables, self.n_restrictions)
+        self.run_phase_1(plRunner)
+
+        # finish until done or unbounded
+        """
+        except UnboundedError:
+            pass
+        except UnfeasibleError:
+            pass
+        """
 
 
 
