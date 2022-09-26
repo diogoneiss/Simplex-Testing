@@ -1,7 +1,6 @@
-parametrize-from-file
 pytest
 numpy
 pandas
 scipy
-setuptools
-pytest-pythonpath
+pytest-html
+pytest-cov

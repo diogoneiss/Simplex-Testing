@@ -1,11 +1,7 @@
-from email.mime import base
-from msilib.schema import tables
 import numpy as np
 import numpy.testing as npt
 import pytest
 from pytest import input_test_data
-import sys
-import io
 from Simplex.main import *
 
 
@@ -66,6 +62,7 @@ class TestSimplex:
 
         npt.assert_allclose(resultC, expectedC)
 
+    @pytest.mark.skip(reason="Feito de maneira melhor usando pivos diretamente")
     def test_canonical_form_creation(self):
         baseTableau = [
             [0, 0, 0, 0, 0, 1, 1, 1, 0],
@@ -87,3 +84,4 @@ class TestSimplex:
         ]
 
         npt.assert_almost_equal(tableau, expectedTableau)
+

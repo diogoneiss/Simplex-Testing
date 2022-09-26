@@ -1,0 +1,1 @@
+pytest --cov-config=.coveragerc --cov-report html:cov_html --cov=. tests/
