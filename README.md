@@ -2,6 +2,9 @@
 
 Desenvolvido por Diogo Neiss e Carlos Magalhães para a disciplina de Pesquisa Operacional
 
+[Ver relatório de testes de unidade](https://htmlpreview.github.io/?https://github.com/diogoneiss/Simplex-Testing/blob/master/report.html) 
+
+
 *Como testar?*
 
 1. Baixar dependencias do arquivo `requirements.txt`, com `pip install -r .\requirements.txt` ou `python -m pip install -r .\requirements.txt`
