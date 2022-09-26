@@ -1,10 +1,11 @@
 # Necessário que a entrada gere os vetores corretamente
 import numpy.testing as npt
 import pytest
+import numpy as np
 from pytest import input_test_data 
 import sys
 import io
-from Simplex.main import *
+from Simplex import *
 
 
 class TestInput:

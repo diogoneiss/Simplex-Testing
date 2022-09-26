@@ -2,7 +2,8 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 from pytest import input_test_data
-from Simplex.main import TableauParsing
+
+from Simplex import TableauParsing
 
 
 class TestTableau:
