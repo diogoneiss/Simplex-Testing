@@ -2,11 +2,37 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 from pytest import input_test_data
-from Simplex import *
-
-
+from Simplex import Simplex
+from Simplex import matprint
+from Simplex import LinearAlgebra
 class TestSimplex:
+    
+    #@pytest.mark.parametrize("entrada", input)
+    def test_simplex_end_tableau(self):
+        entrada = input_test_data[1]
+        
+        simplex = Simplex(entrada.M_variaveis, entrada.N_restricoes, entrada.FullTableau)
+        end = simplex.solve()
+        end_without_vero = LinearAlgebra.drop_vero(end)
+        expected = entrada.EndTableau
 
+        
+        orderedColumns = np.sort(end_without_vero, axis=0)
+        orderedExpected = np.sort(expected, axis=0)
+        
+        npt.assert_allclose(orderedColumns, orderedExpected)
+        
+    def test_simplex_end_solution(self):
+        entrada = input_test_data[1]
+        
+        simplex = Simplex(entrada.M_variaveis, entrada.N_restricoes, entrada.FullTableau)
+        end = simplex.solve()
+        x_solution = LinearAlgebra.get_solution(end)
+        
+        expected = [3, 2, 0, 1, 0]
+        
+        npt.assert_allclose(x_solution, expected)
+        
     def test_basic_pivoting(self):
         baseTableau = np.array([
             [-2, -3, 0, 0, 0, 0],

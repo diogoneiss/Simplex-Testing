@@ -57,18 +57,20 @@ def matprint(mat, fmt="g"):
     """
     Printa uma matriz bonitinha, com o formato tabular
     """
+    if isinstance(mat, list):
+         mat = np.array(mat)
     col_maxes = [max([len(("{:" + fmt + "}").format(x))
                       for x in col]) for col in mat.T]
     for x in mat:
         for i, y in enumerate(x):
-            print(("{:" + str(col_maxes[i]) + fmt + "}").format(y), end="  ")
+            print(("{:" + str(col_maxes[i]) + fmt + "}").format(y), end=", ")
         print("")
         
         
 # run main
 if __name__ == "__main__":
     
-    print("Ola mundo")
+    print(dir(LinearAlgebra))
     tmp = Simplex()
     
     

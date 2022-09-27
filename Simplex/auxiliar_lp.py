@@ -1,7 +1,10 @@
 import numpy as np
 
-from Simplex import *
-
+from Simplex import Simplex
+#from Simplex import LinearAlgebra
+from linear_algebra import LinearAlgebra
+from exceptions import UnboundedError, UnfeasibleError
+from main import matprint
 class AuxiliarLP():
     def __init__(self, tableau, m_variables, n_restrictions):
         
@@ -29,8 +32,16 @@ class AuxiliarLP():
         if self.is_unfeasible():
             raise UnfeasibleError
 
-        # remove synthetic variables and restore c
+        
 
+        # remove synthetic columns (2*n+m to 3n+m) and restore c
+        start_synthetic = self.m_variables + 2*self.n_restrictions
+        dropped_tableau = np.delete(self.tableau, np.s_[start_synthetic: start_synthetic + self.n_restrictions], axis=1)
+        
+        self.tableau = dropped_tableau
+        self.__restore_original_c()
+        
+        return self.tableau
 
 
     def __create_synthetic_c(self):
@@ -77,22 +88,35 @@ class AuxiliarLP():
 
         return newTableau
 
+    def __is_synthetic_variable(self, index):
+        return index >= (self.m_variables + 2 * self.n_restrictions)
+
+    
 
     def is_unfeasible(self):
 
         result = self.tableau[0][-1]
 
         # se o resultado for 0, é otimo.
+        # TODO: Ver caso do livro do Thie, que o Scipy resolve
         if result == 0:
-            # criar aqui alguma lógica de fuçar o tableau e ver se tem alguma base sobrando?
-            # é o problema do scipy
-
+            basic_variables = LinearAlgebra.findBasicColumns(self.tableau, self.n_restrictions, True)
+            print("basic_variables", basic_variables)
+            
+            for i, x_index in enumerate(basic_variables):
+                # means that the variable in the basis is a synthetic variable
+                if self.__is_synthetic_variable(x_index):
+                    print(f"x index {x_index} is synthetic, ie, greater or equal than {self.m_variables}")
+                    matprint(self.tableau)
+                    return True
+            
             return False
 
         # se o resultado for negativo, é inviavel
         if result < 0:
             return True
 
+    # TODO isso aqui tá dando errado no teste, eu desconfio
     def __restore_original_c(self):
         originalC = self.old_c
 

@@ -1,20 +1,25 @@
 import numpy as np
 
-from Simplex import *
-
+from linear_algebra import LinearAlgebra
+from main import matprint
 
 
 class Simplex:
 
-    def __init__(self, m, n, tableauMatrix) -> None:
+    def __init__(self, m, n, tableau) -> None:
 
         self.m_variables = m
         self.n_restrictions = n
-        self.tableau = tableauMatrix
+        # if tableau is a list, convert to np.ndarray
+        if isinstance(tableau, list):
+            self.tableau = np.array(tableau, dtype=float)
+        else:
+            self.tableau = tableau.astype(float)
+        
 
 
     def solve(self):
-        stop = self.isSimplexDone(self.tableau)
+        stop = self.isSimplexDone()
         while not stop:
             # check if unbounded
             #if self.isUnbounded(self.tableau):
@@ -24,27 +29,12 @@ class Simplex:
             row, column = self.findPivot(self.tableau, n_restrictions=self.n_restrictions)
             self.tableau = self.pivotTableau(self.tableau, row=row, column=column)
 
-            stop = self.isSimplexDone(self.tableau)
+            stop = self.isSimplexDone()
 
         return self.tableau
 
 
-    @staticmethod
-    def extract_feasible_columns(tableau: np.ndarray, n_restrictions: int, remove_b=True) -> np.ndarray:
-        """_summary_: Extracts the feasible columns from the tableau.
-
-        Args:
-            tableau (np.ndarray): tableau with vero, a, aditional variables and b
-            n_restrictions (int): number of restrictions
-            remove_b (bool, optional): whether to remove the b column. Defaults to True.
-
-        Returns:
-            np.ndarray: sliced tableau with only the feasible columns
-        """
-        if remove_b:
-            return tableau[:, n_restrictions: -1]
-        else:
-            return tableau[:, n_restrictions:]
+    
 
     @staticmethod
     def isUnbounded(tableau: np.ndarray):
@@ -107,33 +97,35 @@ class Simplex:
     @staticmethod
     def findPivot(original_tableau: np.ndarray, n_restrictions: int):
         # find column < 0
-        column = -1
+        column_i = -1
 
-        feasible_c_columns = Simplex.extract_feasible_columns(original_tableau, n_restrictions)
-
+        feasible_c_columns = LinearAlgebra.extract_feasible_columns(original_tableau, n_restrictions)
+      
         # use bland rule (leftmost c value)
-        for c in feasible_c_columns[0]:
-            if c < 0:
-                column = c + n_restrictions
+        for i, value in enumerate(feasible_c_columns[0]):
+            if value < 0:
+                # need to re-add the vero
+                column_i = i + n_restrictions
                 break
 
         row = -1
         smallestRatio = np.inf
 
         # find smallest ratio (b_i/a_i), such that a_i > 0
-        for i, a_i in enumerate(original_tableau[:, column]):
-            b_i = original_tableau[i][-1]
-            if a_i >= 0:
-                ratio = b_i / a_i
+       
+        for j, a_j in enumerate(original_tableau.T[column_i]):
+            b_j = original_tableau[j][-1]
+            if a_j > 0:
+                ratio = b_j / a_j
 
                 if ratio < smallestRatio:
                     smallestRatio = ratio
-                    row = i
+                    row = j
 
-        if row == column == -1:
+        if row == column_i == -1:
             raise Exception("Colocar texto da excessao de ilimitada")
 
-        return row, column
+        return row, column_i
 
     @staticmethod
     def pivotTableau(original_tableau: np.ndarray, column: int, row: int):

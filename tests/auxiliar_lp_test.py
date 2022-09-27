@@ -7,13 +7,37 @@ import io
 
 from Simplex import *
 
+
 class TestAuxiliar:
+
+    
+    def test_auxiliar_lp_simplex(self):
+        baseTableau = [
+            [0, 0, 0, -3, -2, 0, 0, 0, 0],
+            [1, 0, 0, 2, 1, 1, 0, 0, 8],
+            [0, 1, 0, 1, 2, 0, 1, 0, 8],
+            [0, 0, 1, 1, 1, 0, 0, 1, 5],
+        ]
+        m_variaveis = 2
+        n_restricoes = 3
+
+        pl = AuxiliarLP(baseTableau, m_variaveis, n_restricoes)
+
+        result_tableau = pl.phase_1()
+        matprint(result_tableau)
+        
+        expectedTableau = [[0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                           [1, 0, 0, 2, 1, 1, 0, 0, 1, 0, 0, 8],
+                           [0, 1, 0, 1, 2, 0, 1, 0, 0, 1, 0, 8],
+                           [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 5]]
+
+        npt.assert_allclose(result_tableau, expectedTableau)
 
     def test_auxiliar_tableau(self):
         baseTableau = [
             [0, 0, 0, -3, -2, 0, 0, 0, 0],
-            [1, 0, 0, 2, 1, 1, 0, 0,
-             8], [0, 1, 0, 1, 2, 0, 1, 0, 8],
+            [1, 0, 0, 2, 1, 1, 0, 0, 8],
+            [0, 1, 0, 1, 2, 0, 1, 0, 8],
             [0, 0, 1, 1, 1, 0, 0, 1, 5],
         ]
 
@@ -30,10 +54,12 @@ class TestAuxiliar:
         npt.assert_allclose(resultC, expectedC)
 
     def test_SyntheticRestrictionAddition(self):
-        baseTableau = [[0, 0, 0, -3, -2, 0, 0, 0, 0],
-                       [1, 0, 0, 2, 1, 1, 0, 0,
-                        8], [0, 1, 0, 1, 2, 0, 1, 0, 8],
-                       [0, 0, 1, 1, 1, 0, 0, 1, 5], ]
+        baseTableau = [
+            [0, 0, 0, -3, -2, 0, 0, 0, 0],
+            [1, 0, 0, 2, 1, 1, 0, 0, 8],
+            [0, 1, 0, 1, 2, 0, 1, 0, 8],
+            [0, 0, 1, 1, 1, 0, 0, 1, 5],
+        ]
 
         m_variaveis = 2
         n_restricoes = 3
