@@ -1,7 +1,7 @@
 import numpy as np
-
+import logging
 from linear_algebra import LinearAlgebra
-from main import matprint
+
 
 
 class Simplex:
@@ -20,6 +20,9 @@ class Simplex:
 
     def solve(self):
         stop = self.isSimplexDone()
+        #print("___")
+        #matprint(self.tableau)
+        
         while not stop:
             # check if unbounded
             #if self.isUnbounded(self.tableau):
@@ -27,9 +30,12 @@ class Simplex:
 
             # pivotear
             row, column = self.findPivot(self.tableau, n_restrictions=self.n_restrictions)
+            #print(f"Pivoting tableau[{row}][{column}], {self.tableau[row, column]}")
             self.tableau = self.pivotTableau(self.tableau, row=row, column=column)
 
             stop = self.isSimplexDone()
+            
+            #matprint(self.tableau)
 
         return self.tableau
 
@@ -78,21 +84,37 @@ class Simplex:
         return True
 
     @staticmethod
-    @DeprecationWarning
-    def putInCanonicalForm(original_tableau: np.ndarray, basicColumns: list):
+    def putInCanonicalForm(original_tableau: np.ndarray):
         # for each basic column, subtract the column from the objective function c times such
         # that the basic column is zero in the first row
 
-        for rowIndex, basicColumn in enumerate(basicColumns):
-            # the first row is the objective function
-            c_i = original_tableau[0, basicColumn]
+        basic_columns = LinearAlgebra.findBasicColumns(original_tableau, drop_c=True)
 
-            variable_row = np.where(original_tableau[1:, basicColumn] == 1)[0][0] + 1
+        pivoted_tableau = original_tableau
+        #print(basic_columns)
+        #matprint(pivoted_tableau)
+        for restriction, x_index in enumerate(basic_columns):
+            
+            #pivoting at the c_i, such that i is the ith variable in basis
+            c_index = pivoted_tableau[0, x_index]
+            if  c_index == 0:
+                #print(f"C pivot with value {c_index} at i = {x_index}, skipping")
+                continue
+            
+            #print(f"C pivot with value {c_index} at i = {x_index}")
+            pivoted_tableau = Simplex.pivotTableau(pivoted_tableau, column=x_index, row=restriction+1)
+            
+            # the first row is the objective function
+            # and the i_th item is the current pivot
+            #c_i = original_tableau[0, x_index]
+
+            #variable_row = np.where(original_tableau[1:, basicColumn] == 1)[0][0] + 1
 
             # subtract the basis (an identity) times c_i, resulting in c_i = 0
-            original_tableau[0] -= c_i * original_tableau[variable_row]
-
-        return original_tableau
+            #original_tableau[0] -= c_i * original_tableau[variable_row]
+        #print("___")
+        #matprint(pivoted_tableau)
+        return pivoted_tableau
 
     @staticmethod
     def findPivot(original_tableau: np.ndarray, n_restrictions: int):
@@ -130,6 +152,7 @@ class Simplex:
     @staticmethod
     def pivotTableau(original_tableau: np.ndarray, column: int, row: int):
 
+        
         # se passar lista inves de np.array() não quebra
         if (type(original_tableau) is list):
             tableau = np.array(original_tableau, dtype=float)
@@ -137,18 +160,30 @@ class Simplex:
             tableau = np.copy(original_tableau)
 
         num_rows, _ = tableau.shape
+        
+        
         pivotableRows = list(range(num_rows))
 
         pivotValue = tableau[row][column]
-
-        # modificar row para pivo ser 1 e remover da lista
+        #print(f"Pivoting {pivotValue} at [{row},{column}] ")
+        
+        
+        if pivotValue == 0:
+            logging.fatal(f"Pivoting by 0 at tableau[{row}, {column}]")
+            
+        # make pivot 1
         tableau[row] = tableau[row] * (1.0 / pivotValue)
 
+        # remove pivot row from list, as it is already done
         idxPivot = pivotableRows.index(row)
         pivotableRows.pop(idxPivot)
+        
+        #print("Pivotable rows", pivotableRows)
 
-        # manipular rows pelo valor necessario para tornalos zero
+        # make each value in column zero
         for current_row in pivotableRows:
+            
+           
             """
             Se eu tenho
             [[3 2 3],
@@ -161,7 +196,11 @@ class Simplex:
             == [0, - 10, -12]
             
             """
+            
+            # if the current_row is 0, this will do nothing
             rowSubtractor = tableau[row] * tableau[current_row][column]
+            #print("I want to zero ")
+            #print(f"Subtracting {rowSubtractor} from {tableau[current_row]} ")
             tableau[current_row] -= rowSubtractor
 
         return tableau

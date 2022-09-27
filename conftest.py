@@ -2,10 +2,11 @@ import pytest
 import os
 from pathlib import Path
 from utils.readJsonData import inject_test_data
-
+from utils.logger import setup_logger
 
 def pytest_configure():
     pytest.input_test_data = get_json_input()
+    setup_logger()
 
 
 def get_json_input() -> list:

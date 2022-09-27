@@ -1,10 +1,10 @@
 import numpy as np
 
-from Simplex import Simplex
-#from Simplex import LinearAlgebra
-from linear_algebra import LinearAlgebra
+
+from simplex import Simplex
+from linear_algebra import LinearAlgebra, matprint
 from exceptions import UnboundedError, UnfeasibleError
-from main import matprint
+
 class AuxiliarLP():
     def __init__(self, tableau, m_variables, n_restrictions):
         
@@ -19,8 +19,7 @@ class AuxiliarLP():
         self.old_c = tableau[0]
         
 
-    def phase_1(self):
-        
+    def __run_auxiliar_lp(self):
         canonical_tableau = self.setup_canonical_form()
         
         # create simplex object with the new tableau and variables
@@ -33,13 +32,30 @@ class AuxiliarLP():
             raise UnfeasibleError
 
         
+       
+        
+        
+    def phase_1(self):
+        """Checks for feasibility and returns a tableau with trivial basis
 
+        Returns:
+            _type_: _description_
+        """
+        
+        # run simplex to try to get to zero value objective function
+        # throws exception if unfeasible
+        self.__run_auxiliar_lp()
+        
         # remove synthetic columns (2*n+m to 3n+m) and restore c
         start_synthetic = self.m_variables + 2*self.n_restrictions
-        dropped_tableau = np.delete(self.tableau, np.s_[start_synthetic: start_synthetic + self.n_restrictions], axis=1)
+        self.tableau = np.delete(self.tableau, np.s_[start_synthetic: start_synthetic + self.n_restrictions], axis=1)
         
-        self.tableau = dropped_tableau
         self.__restore_original_c()
+        
+       
+        
+        self.tableau = Simplex.putInCanonicalForm(self.tableau)
+        
         
         return self.tableau
 
@@ -116,10 +132,11 @@ class AuxiliarLP():
         if result < 0:
             return True
 
-    # TODO isso aqui tá dando errado no teste, eu desconfio
     def __restore_original_c(self):
         originalC = self.old_c
 
+        
+        
         # get only first n values from row
         veroData = self.tableau[0][0:self.n_restrictions]
 
@@ -132,5 +149,4 @@ class AuxiliarLP():
 
         self.tableau[0] = originalC
 
-        return self.tableau
 

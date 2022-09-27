@@ -125,3 +125,18 @@ class TestLinearAlgebra:
         expectedColumns = [7, 3, 9]
 
         npt.assert_allclose(basicColumns, expectedColumns)
+        
+    def test_advanced_column_retrieval_with_non_canonic_tableau(self):
+        # caso com vero e b, porem precisa droppar o c
+        sampleTableau = np.array([
+            [0, 0, 0, 0, 0, 1, 1, 1, 0],
+            [1, 0, 0, 2, 1, 1, 0, 0, 8],
+            [0, 1, 0, 1, 2, 0, 1, 0, 8],
+            [0, 0, 1, 1, 1, 0, 0, 1, 5],
+        ])
+
+        basicColumns = LinearAlgebra.findBasicColumns(sampleTableau, drop_c=True)
+
+        expectedColumns = [5, 6, 7]
+
+        npt.assert_allclose(basicColumns, expectedColumns)

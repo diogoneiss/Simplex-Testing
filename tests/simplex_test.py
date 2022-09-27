@@ -58,6 +58,8 @@ class TestSimplex:
 
         npt.assert_allclose(resultC, expectedC)
 
+    
+
     def test_repeated_pivots(self):
         baseTableau = np.array([
             [-2, -3, 0, 0, 0, 0],
@@ -88,7 +90,6 @@ class TestSimplex:
 
         npt.assert_allclose(resultC, expectedC)
 
-    @pytest.mark.skip(reason="Feito de maneira melhor usando pivos diretamente")
     def test_canonical_form_creation(self):
         baseTableau = [
             [0, 0, 0, 0, 0, 1, 1, 1, 0],
@@ -99,9 +100,8 @@ class TestSimplex:
 
         baseColumns = [5, 6, 7]
 
-        tableau = Simplex.putInCanonicalForm(np.array(baseTableau),
-                                             baseColumns)
-
+        tableau = Simplex.putInCanonicalForm(np.array(baseTableau))
+                                             
         expectedTableau = [
             [-1, -1, -1, -4, -4, 0, 0, 0, -21],
             [1, 0, 0, 2, 1, 1, 0, 0, 8],

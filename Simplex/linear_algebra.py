@@ -1,7 +1,31 @@
 import numpy as np
+import logging
 
-from main import matprint
+
+
+def arrayPrint(array):
+    """
+    Desestrutura e printa o array bonitinho, separando em espaços e com arredondamento de 7 casas decimais
+    """
+    print(*array.round(7), sep=' ')
+
+
+def matprint(mat, fmt="g"):
+    """
+    Printa uma matriz bonitinha, com o formato tabular
+    """
+    if isinstance(mat, list):
+         mat = np.array(mat)
+    col_maxes = [max([len(("{:" + fmt + "}").format(x))
+                      for x in col]) for col in mat.T]
+    for x in mat:
+        for i, y in enumerate(x):
+            print(("{:" + str(col_maxes[i]) + fmt + "}").format(y), end=", ")
+        print("")
 class LinearAlgebra:
+    
+    
+    
     
     @staticmethod
     def get_number_of_m_variables(tableau, has_vero=True):
@@ -98,34 +122,49 @@ class LinearAlgebra:
             return tableau[:, n_restrictions:]
         
     @staticmethod
-    def findBasicColumns(tableau, drop_undesired=False,  drop_vero=True, drop_b=True):
+    def findBasicColumns(tableau, drop_c=False,  drop_vero=True, drop_b=True):
         """ Gets the column indexes of the basic columns in the tableau, that is, the columns with one 1 and all zeros
         Each index represents a restriction and the value represents the variable index that is in the basis
-        """
         
-        if drop_undesired:
-            drop_vero = drop_b = True
+        """
         
         n_restrictions = LinearAlgebra.get_number_of_n_restrictions(tableau)
         
         basicIndexes = np.full(n_restrictions, -1)
         
+        if drop_c:
+            tableau = np.delete(tableau, 0, axis=0)
+        
+       
+        
         for idx, column in enumerate(tableau.T):
             #skip operations register and b column if desired
-            if drop_vero and idx < n_restrictions:
+            if drop_vero and idx < n_restrictions:                
                 continue
-            if drop_b and idx == len(tableau.T) - 1:
+            if drop_b and idx == len(tableau.T) - 1:                
                 continue
             
-            if np.count_nonzero(column) == 1 and column[0] == 0:
+            
+            
+            # i removed the and column[0] == 0 check
+            is_basis = np.count_nonzero(column) == 1
+            
+            if not drop_c:
+                is_basis = is_basis and column[0] == 0
+            
+            if is_basis:
                 
                 
                 # finds the index of the 1 in the column
                 # this is the b value and idx is the active X_idx
-                position = np.where(column == 1)[0][0] -1
+                position = np.where(column == 1)[0][0] 
+                
+                # if c row is still present we need to decrease the position value
+                if not drop_c:
+                    position -= 1
                 
                 if basicIndexes[position] != -1:
-                    print(f"{idx} will not enter, already found basic column for {position} with  X_{basicIndexes[position]}")
+                    logging.warning(f"{idx} will not enter, already found basic column for {position} with  X_{basicIndexes[position]}")
                 else:
                     basicIndexes[position] = idx
                 

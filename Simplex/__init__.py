@@ -6,6 +6,6 @@ from tableau import TableauParsing
 
 from exceptions import UnboundedError, UnfeasibleError
 
-from linear_algebra import LinearAlgebra
+from linear_algebra import LinearAlgebra, arrayPrint, matprint
 
-from main import SimplexTester, SimplexRunner, arrayPrint, matprint
+from main import SimplexTester, SimplexRunner

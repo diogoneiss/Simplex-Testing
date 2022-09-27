@@ -10,7 +10,6 @@ from Simplex import *
 
 class TestAuxiliar:
 
-    
     def test_auxiliar_lp_simplex(self):
         baseTableau = [
             [0, 0, 0, -3, -2, 0, 0, 0, 0],
@@ -23,13 +22,17 @@ class TestAuxiliar:
 
         pl = AuxiliarLP(baseTableau, m_variaveis, n_restricoes)
 
-        result_tableau = pl.phase_1()
+        pl._AuxiliarLP__run_auxiliar_lp()
+
+        result_tableau = pl.tableau
+
         matprint(result_tableau)
-        
-        expectedTableau = [[0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-                           [1, 0, 0, 2, 1, 1, 0, 0, 1, 0, 0, 8],
-                           [0, 1, 0, 1, 2, 0, 1, 0, 0, 1, 0, 8],
-                           [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 5]]
+
+        expectedTableau = np.array(
+            [[0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 1., 0.],
+            [0., -1., 2., 1., 0., 0., -1., 2., 0., -1., 2., 2.],
+            [1., 1., -3., 0., 0., 1., 1., -3., 1., 1., -3., 1.],
+            [0., 1., -1., 0., 1., 0., 1., -1., 0., 1., -1., 3.]])
 
         npt.assert_allclose(result_tableau, expectedTableau)
 
@@ -117,7 +120,9 @@ class TestAuxiliar:
         pl = AuxiliarLP(baseTableau, m_variaveis, n_restricoes)
         pl.old_c = np.array(old_c)
 
-        tableau = pl._AuxiliarLP__restore_original_c()
+        pl._AuxiliarLP__restore_original_c()
+
+        tableau = pl.tableau
 
         calculatedC = tableau[0]
         expectedTableau = [-1, -1, -1, -7, -6, -1, -1, -1, -21]

@@ -109,7 +109,7 @@ class TableauParsing:
     @staticmethod
     def readAndCreateTableau(n: int, m: int):
 
-        c, a = TableauParsing.readInput()
+        c, a = TableauParsing.readInput(n)
 
         combinedC_AB = TableauParsing.create_regular_tableau(c, a, n, m)
         fullTableau = TableauParsing.add_operations_register_tableau(combinedC_AB, n)
