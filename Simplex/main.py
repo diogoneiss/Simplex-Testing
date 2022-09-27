@@ -24,8 +24,10 @@ class SimplexRunner():
     def __init__(self) -> None:
 
         # read m n
+        # TODO: Arrumar erro de ordem, não coloquei direito oq é oq
+        self.n_restrictions, self.m_variables = TableauParsing.readDimensions()
 
-        self.m_variables, self.n_restrictions = TableauParsing.readDimensions()
+        print(self.m_variables, self.n_restrictions, )
 
         self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
         

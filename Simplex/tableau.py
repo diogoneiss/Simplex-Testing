@@ -40,6 +40,14 @@ class TableauParsing:
     @staticmethod
     def add_auxilliary_variables_to_a(a, n: int, m: int):
 
+        if isinstance(a, list):
+            a = np.array(a)
+
+        print("A: ")
+        print(a)
+        
+        print("M_variables", m)
+
         # inserir na posicao m (ultima variavel) uma matriz identidade n*n
         tableauBase = np.insert(a, m, np.identity(n), axis=1)
 
