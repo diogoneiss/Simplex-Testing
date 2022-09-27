@@ -1,9 +1,18 @@
 import numpy as np
 
+import logging
+
+
 from tableau import TableauParsing
 from auxiliar_lp import AuxiliarLP
 from simplex import Simplex
-from linear_algebra import matprint
+from linear_algebra import matprint, LinearAlgebra, arrayPrint
+from exceptions import *
+
+logging.basicConfig(
+    format='[%(filename)s:%(lineno)d] %(message)s',
+    
+)
 
 class SimplexTester:
     """
@@ -22,17 +31,34 @@ class SimplexTester:
 
 class SimplexRunner():
     def __init__(self) -> None:
-
-        # read m n
-        # TODO: Arrumar erro de ordem, não coloquei direito oq é oq
-        self.n_restrictions, self.m_variables = TableauParsing.readDimensions()
-
-        print(self.m_variables, self.n_restrictions, )
-
-        self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
+        """ Cria o objeto e le a entrada
+        """
         
+        self.n_restrictions, self.m_variables = TableauParsing.readDimensions()
+        self.tableau = TableauParsing.readAndCreateTableau(self.n_restrictions, self.m_variables)
+       
         self.simplex = None
         
+        
+    def print_certificate(self):
+        firstRow = self.tableau[0] 
+        certifate = firstRow[:self.n_restrictions]
+        arrayPrint(certifate)
+    
+    def print_x_solution(self):
+        x_solution = LinearAlgebra.get_solution(self.tableau)
+        x_solutions_without_aux_variables = x_solution[:self.m_variables]
+        arrayPrint(x_solutions_without_aux_variables)
+        
+    
+    def get_optimal_value(self):
+        """Gets value at last column of first row, i.e, optimal value
+
+        Returns:
+            _type_: _description_
+        """
+        return self.tableau[0][-1]
+    
     def runSimplex(self):
         try:
             # execute phase 1
@@ -46,16 +72,28 @@ class SimplexRunner():
             phase2.solve()
             
             self.tableau = phase2.tableau
-            matprint(self.tableau)
+            print("otima")
+            print(self.get_optimal_value())
+            self.print_x_solution()
+            self.print_certificate()
+            """
+            otima
+            36.0000000
+            0.0000000 3.6000000 
+            0.0000000 2.0000000 0.0000000 0.0000000 
+            """
 
         # finish until done or unbounded
         
         except UnboundedError:
-            print("Ilimitada")
+            print("ilimitada")
+            print(self.print_certificate())
+
             pass
         except UnfeasibleError:
-            print("Inviavel")
-            
+            print("inviavel")
+            print(self.print_certificate())
+
             pass
         
 

@@ -10,28 +10,26 @@ from Simplex import *
 
 class TestInput:
     
-
-    
     # fazer isso tudo mockando o input com o Typer
     @pytest.mark.parametrize("entrada", input_test_data)
     def test_input_read_m_n(self, entrada):
         sys.stdin = io.StringIO(entrada.input)
-        m, n = TableauParsing.readDimensions()
+        n_restrictions, m = TableauParsing.readDimensions()
         
         assert m == entrada.M_variaveis
-        assert n == entrada.N_restricoes
+        assert n_restrictions == entrada.N_restricoes
     
     @pytest.mark.parametrize("entrada", input_test_data)
     def test_input_read(self, entrada):
         
         sys.stdin = io.StringIO(entrada.input)
 
-        m, n = TableauParsing.readDimensions()
-        print("Capturado: ", n, m)
+        n_restrictions, m = TableauParsing.readDimensions()
+        print("Capturado: ", n_restrictions, m)
         
         print("Esperado:", entrada.N_restricoes)
         
-        arrayC, arrayAB = TableauParsing.readInput(n)
+        arrayC, arrayAB = TableauParsing.readInput(n_restrictions)
         
         
         # preciso que seja [C] e não C.

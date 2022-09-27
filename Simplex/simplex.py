@@ -197,6 +197,13 @@ class Simplex:
             
             """
             
+            b_i = tableau[current_row, -1]
+            
+            # TODO: Ver se isso é a melhor maneira de lidar com b negativo
+            # TODO: Criar um método numericamente seguro de comparação com zero (tolerancia de proximidade)
+            #if b_i < 0:
+            #    tableau[current_row] = tableau[current_row] * - 1
+            
             # if the current_row is 0, this will do nothing
             rowSubtractor = tableau[row] * tableau[current_row][column]
             #print("I want to zero ")

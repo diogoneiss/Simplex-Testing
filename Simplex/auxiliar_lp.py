@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 
 
@@ -117,7 +118,7 @@ class AuxiliarLP():
         # TODO: Ver caso do livro do Thie, que o Scipy resolve
         if result == 0:
             basic_variables = LinearAlgebra.findBasicColumns(self.tableau, self.n_restrictions, True)
-            print("basic_variables", basic_variables)
+            logging.debug("basic_variables", basic_variables)
             
             for i, x_index in enumerate(basic_variables):
                 # means that the variable in the basis is a synthetic variable

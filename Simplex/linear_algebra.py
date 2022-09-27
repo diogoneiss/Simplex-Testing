@@ -164,7 +164,8 @@ class LinearAlgebra:
                     position -= 1
                 
                 if basicIndexes[position] != -1:
-                    logging.warning(f"{idx} will not enter, already found basic column for {position} with  X_{basicIndexes[position]}")
+                    #matprint(tableau)
+                    logging.debug(f"{idx}th column will not enter, already found basic row for {position}th restriction with column  X_{basicIndexes[position]}")
                 else:
                     basicIndexes[position] = idx
                 

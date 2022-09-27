@@ -21,10 +21,11 @@ class TestTableau:
                                     [10, 11, 12, 0, 0, 0, 1]])
 
         npt.assert_allclose(tableauBase, expectedTableau)
-        """Método que vai testar se o C é corretamente montado de acordo com a largura de A
-        """
+        
 
     def test_tableau_first_line(self):
+        """Método que vai testar se o C é corretamente montado de acordo com a largura de A
+        """
         arrayC = [1, 2, 3]
         n = 4
         m = 3

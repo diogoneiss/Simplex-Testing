@@ -28,7 +28,7 @@
         },
         {
             "case": "2",
-            "input": "2 3\n3 2\n2 1 8\n1 2 8\n1 1 5",
+            "input": "3 2\n3 2\n2 1 8\n1 2 8\n1 1 5",
             "M_variaveis": 2,
             "N_restricoes": 3,
             "C": [3, 2],
